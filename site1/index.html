@@ -1,0 +1,16 @@
+<h1>SITE 1</h1>
+
+<button onclick="loadDate()">
+GET API
+</button>
+
+<p id="result"></p>
+
+<script>
+async function loadData() {
+	const response = await fetch('/api/')
+	const data = await response.text()
+
+	document.getElementById('result').innerText = data
+}
+</script>
