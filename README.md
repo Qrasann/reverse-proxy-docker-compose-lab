@@ -1,5 +1,5 @@
 
-# Reverse Proxt Docker Compose Lab
+# Reverse Proxy Docker Compose Lab
 
 Devops-project: multi-container app with nginx reverse proxy, backend API, static sites, healthcheck and environment variables.
 
