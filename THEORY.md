@@ -44,9 +44,9 @@ localhost depends on where comand is executed:
 
 First checks:
 
+```bash
 docker-compose ps
 docker-compose logs proxy
 docker-compose logs backend
 curl localhost/health
 
-```text
