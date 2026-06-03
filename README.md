@@ -40,15 +40,18 @@ Stack
  * Environment variables
  
 RUN
+```bash
 docker-compose up -d --build
 
 CHECK
+```bash
 curl localhost/site1/
 curl localhost/site2/
 curl localhost/api/
 curl localhost/health
 docker-compose ps
 
+```text
 expected
 {"message": "Hello from ENV"}
 OK
@@ -64,4 +67,4 @@ What I practiced
  * Environment variables
  * Debugging with logs, ps and curl
 
-```bash
+```
