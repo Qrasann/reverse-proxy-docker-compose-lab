@@ -5,6 +5,18 @@
 
 Devops-project: multi-container app with nginx reverse proxy, backend API, static sites, healthcheck and environment variables.
 
+
+##CI/CD
+
+Github Actions pipeline checks this project on every push:
+
+- validates Docker Compose config
+- builds Docker images
+- starts all services
+- checks '/api/'
+- checks '/health'
+- stops containers after tests
+
 ## Architecture
 
 ```text
