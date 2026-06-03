@@ -27,6 +27,7 @@ if a file is copied into image using Dockerfile COPY, changes require rebuild:
 ```bash
 docker-compose up -d --build
 
+```
 
 if a file mounted as volume, changes usually do not require rebuild.
 
