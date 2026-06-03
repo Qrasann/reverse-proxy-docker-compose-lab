@@ -1,6 +1,8 @@
 
 # Reverse Proxy Docker Compose Lab
 
+![Docker Compose CI](https://github.com/Qrasann/reverse-proxy-docker-compose-lab/actions/workflows/ci.yml/badge.svg)
+
 Devops-project: multi-container app with nginx reverse proxy, backend API, static sites, healthcheck and environment variables.
 
 ## Architecture
