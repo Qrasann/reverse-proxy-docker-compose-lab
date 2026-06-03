@@ -1,4 +1,4 @@
-\
+
 # Reverse Proxy Docker Compose Lab
 
 ![Docker Compose CI](https://github.com/Qrasann/reverse-proxy-docker-compose-lab/actions/workflows/ci.yml/badge.svg)
@@ -64,4 +64,4 @@ What I practiced
  * Environment variables
  * Debugging with logs, ps and curl
 
-```
+```bash
