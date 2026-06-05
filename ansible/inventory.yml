@@ -1,0 +1,6 @@
+all:
+ children:
+  devops_servers:
+   hosts:
+    localhost:
+     ansible_connection: local
