@@ -1,0 +1,60 @@
+---
+- name: Deploy reverse proxy Docker Compose lab
+  hosts: devops_servers
+  become: yes
+
+  tasks:
+    - name: Check Docker is installed
+      command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Show Docker version
+      debug:
+        var: docker_version.stdout
+
+    - name: Check Docker Compose is installed
+      command: docker-compose --version
+      register: compose_version
+      changed_when: false
+
+    - name: Show Docker Compose version
+      debug:
+        var: compose_version.stdout
+    - name: Start Docker Compose stack
+      command: docker-compose up -d --build
+      args:
+        chdir: "{{ playbook_dir}}/.."
+
+    - name: Check running containers
+      command: docker-compose ps
+      args:
+        chdir: "{{ playbook_dir }}/.."
+      register: compose_ps
+      changed_when: false
+
+    - name: Show running containers
+      debug:
+        var: compose_ps.stdout
+
+    - name: Check API endpoint
+      uri:
+        url: http://localhost/api/
+        return_content: yes
+        status_code: 200
+      register: api_response
+
+    - name: Show API response
+      debug:
+        var: api_response.content
+
+    - name: Check health endpoint
+      uri:
+        url: http://localhost/health
+        return_content: yes
+        status_code: 200
+      register: health_response
+
+    - name: Show health response
+      debug:
+        var: health_response.content
