@@ -17,6 +17,24 @@ Github Actions pipeline checks this project on every push:
 - checks '/health'
 - stops containers after tests
 
+## Ansible deployment
+
+This project includes an Ansible playbook for local deployment testing.
+
+Run:
+
+```bash
+ansible-playbook -i ./ansible/inventory.yml ansible/deploy.yml -K
+```
+The playbook:
+
+- checks Docker version
+- checks Docker Compose version
+- starts the Docker Compose stack
+- shows running containers
+- checks /api/
+- checks /health
+
 ##Architecture
 
 ```text
