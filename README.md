@@ -24,7 +24,7 @@ This project includes an Ansible playbook for local deployment testing.
 Run:
 
 ```bash
-ansible-playbook -i ./ansible/inventory.yml ansible/deploy.yml -K
+ansible-playbook -i ./ansible/hosts.yml ansible/deploy.yml -K
 ```
 The playbook:
 
