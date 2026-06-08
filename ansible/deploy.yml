@@ -25,6 +25,10 @@
       command: docker-compose up -d --build
       args:
         chdir: "{{ playbook_dir}}/.."
+      register: compose_up
+    - name: Show Docker Compose up result
+      debug:
+        var: compose_up.stdout_lines
 
     - name: Check running containers
       command: docker-compose ps
@@ -43,6 +47,9 @@
         return_content: yes
         status_code: 200
       register: api_response
+      retries: 5
+      delay: 3
+      until: api_response.status == 200
 
     - name: Show API response
       debug:
@@ -58,3 +65,14 @@
     - name: Show health response
       debug:
         var: health_response.content
+
+    - name: Check site1 response
+      uri:
+        url: http://localhost/site1/
+        return_content: yes
+        status_code: 200
+      register: site1_response
+
+    - name: Show site1 response
+      debug:
+        var: site1_response.content
