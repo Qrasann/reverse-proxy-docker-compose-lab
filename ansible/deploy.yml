@@ -21,11 +21,13 @@
     - name: Show Docker Compose version
       debug:
         var: compose_version.stdout
+
     - name: Start Docker Compose stack
       command: docker-compose up -d --build
       args:
         chdir: "{{ playbook_dir}}/.."
       register: compose_up
+
     - name: Show Docker Compose up result
       debug:
         var: compose_up.stdout_lines
@@ -76,3 +78,14 @@
     - name: Show site1 response
       debug:
         var: site1_response.content
+
+    - name: Check site2 response
+      uri:
+        url: http://localhost/site2/
+        return_content: yes
+        status_code: 200
+      register: site2_response
+
+    - name: Show site2 response
+      debug:
+        var: site2_response.content
