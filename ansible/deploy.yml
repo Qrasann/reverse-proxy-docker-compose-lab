@@ -63,6 +63,9 @@
         return_content: yes
         status_code: 200
       register: health_response
+      retries: 5
+      delay: 3
+      until: health_response.status == 200
 
     - name: Show health response
       debug:
@@ -74,6 +77,9 @@
         return_content: yes
         status_code: 200
       register: site1_response
+      retries: 5
+      delay: 3
+      until: site1_response.status == 200
 
     - name: Show site1 response
       debug:
@@ -85,6 +91,9 @@
         return_content: yes
         status_code: 200
       register: site2_response
+      retries: 5
+      delay: 3
+      until: site2_response.status == 200
 
     - name: Show site2 response
       debug:
