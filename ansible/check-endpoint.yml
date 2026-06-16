@@ -2,20 +2,26 @@
 - name: playbook
   hosts: devops_servers
   become: false
-  
+
   vars:
     endpoints:
-      - http://localhost/api/
-      - http://localhost/health
-      - http://localhost/site1/
-      - http://localhost/site2/
+      - name: api
+        url: http://localhost/api/
+      - name: health
+        url: http://localhost/health
+      - name: site1
+        url: http://localhost/site1/
+      - name: site2
+        url: http://localhost/site2/
 
   tasks:
     - name: Check all endpoints
       ansible.builtin.uri:
-        url: "{{ item }}"
+        url: "{{ item.url }}"
         status_code: 200
       loop: "{{ endpoints }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: endpoint_result
       retries: 5
       delay: 2
