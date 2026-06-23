@@ -32,11 +32,8 @@ jobs:
       - name: Wait for services
         run: sleep 10
 
-      - name: Check API
-        run: curl -f http://localhost/api/
-
-      - name: Check health endpoint
-        run: curl -f http://localhost/health
+      - name: Run smoke tests
+        run: ./scripts/smoke-test.sh
 
       - name: Show containers
         run: docker compose ps
