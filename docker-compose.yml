@@ -6,7 +6,7 @@ services:
   restart: always
   environment:
     - PORT=5000
-    - MESSAGE=Hello from ENV
+    - MESSAGE=${MESSAGE}
 
   healthcheck:
    test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
@@ -15,7 +15,7 @@ services:
    retries: 3
 
  proxy:
-  image: nginx
+  image: nginx:1.29.8
   restart: always
   ports:
    - "80:80"
@@ -28,11 +28,11 @@ services:
       - backend
 
  site1:
-  image: nginx
+  image: nginx:1.29.8
   volumes:
     - ./site1:/usr/share/nginx/html
 
  site2:
-  image: nginx
+  image: nginx:1.29.8
   volumes:
     - ./site2:/usr/share/nginx/html
