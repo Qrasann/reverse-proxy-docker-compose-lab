@@ -20,7 +20,7 @@ services:
   ports:
    - "80:80"
   volumes:
-   - ./proxy/default.conf:/etc/nginx/conf.d/default.conf
+   - ./proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
 
   depends_on:
       - site1
@@ -30,9 +30,11 @@ services:
  site1:
   image: nginx:1.29.8
   volumes:
-    - ./site1:/usr/share/nginx/html
+    - ./site1:/usr/share/nginx/html:ro
 
  site2:
   image: nginx:1.29.8
   volumes:
-    - ./site2:/usr/share/nginx/html
+    - ./site2:/usr/share/nginx/html:ro
+
+
