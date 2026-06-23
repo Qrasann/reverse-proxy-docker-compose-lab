@@ -10,6 +10,9 @@ jobs:
   docker-compose-check:
     runs-on: ubuntu-latest
 
+    env:
+      MESSAGE: Hello from ENV
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
