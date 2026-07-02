@@ -1,88 +1,159 @@
-
 # Reverse Proxy Docker Compose Lab
 
-![Docker Compose CI](https://github.com/Qrasann/reverse-proxy-docker-compose-lab/actions/workflows/ci.yml/badge.svg)
+A DevOps practice project that demonstrates a small multi-service application with Docker Compose, Nginx reverse proxy, Ansible deployment automation, GitHub Actions CI, and reusable smoke tests.
 
-Devops-project: multi-container app with nginx reverse proxy, backend API, static sites, healthcheck and environment variables.
-
-
-##CI/CD
-
-Github Actions pipeline checks this project on every push:
-
-- validates Docker Compose config
-- builds Docker images
-- starts all services
-- checks '/api/'
-- checks '/health'
-- stops containers after tests
-
-## Ansible deployment
-
-This project includes an Ansible playbook for local deployment testing.
-
-Run:
-
-```bash
-ansible-playbook -i ./ansible/hosts.yml ansible/deploy.yml -K
-```
-The playbook:
-
-- checks Docker version
-- checks Docker Compose version
-- starts the Docker Compose stack
-- shows running containers
-- checks /api/
-- checks /health
-
-##Architecture
+## Architecture
 
 ```text
-
 Client
-  |
-Nginx Reverse Proxy :80
-  |--- /site1/ -> site1 nginx container
-  |--- /site2/ -> site2 nginx container
-  |---/api/    -> backend python cointainer
-  |---/health  -> backend heallth endpoint
+→ Host port 80
+→ Docker port publishing
+→ Nginx proxy container
+→ backend / site1 / site2 containers
+```
 
+## Services
 
-Stack
- * Docker
- * Docker Compose
- * Nginx
- * Python HTTP server
- * Linux
- * Healthchecks
- * Environment variables
- 
-RUN
+- `proxy` — Nginx reverse proxy, exposed on host port `80`
+- `backend` — Python backend service with `/api/` and `/health`
+- `site1` — static Nginx site
+- `site2` — static Nginx site
+
+## Features
+
+- Multi-service Docker Compose setup
+- Nginx reverse proxy
+- Python backend with health endpoint
+- Docker healthcheck
+- Pinned Nginx image version
+- `.env.example` for runtime configuration
+- Real `.env` ignored by Git
+- Backend container runs as non-root user
+- Read-only volume mounts for Nginx configuration and static content
+- Reusable smoke test script
+- Ansible deployment workflow
+- GitHub Actions CI pipeline
+- Makefile for common commands
+
+## Requirements
+
+- Docker
+- Docker Compose
+- Make
+- Ansible
+- Bash
+- curl
+
+## Quick Start
+
+Create local environment file:
+
+```bash
+cp -n .env.example .env
+```
+
+Start the stack:
+
+```bash
+make up
+```
+
+Check containers:
+
+```bash
+make ps
+```
+
+Run smoke tests:
+
+```bash
+make test
+```
+
+Stop the stack:
+
+```bash
+make down
+```
+
+## Manual Docker Compose Commands
+
 ```bash
 docker-compose up -d --build
-
-CHECK
-```bash
-curl localhost/site1/
-curl localhost/site2/
-curl localhost/api/
-curl localhost/health
 docker-compose ps
+./scripts/smoke-test.sh
+docker-compose logs --tail=50
+docker-compose down
+```
+
+## Endpoints
 
 ```text
-expected
-{"message": "Hello from ENV"}
-OK
+/health → OK
+/api/    → Hello from ENV
+/site1/  → SITE 1
+/site2/  → SITE 2
+```
 
-What I practiced
- * Docker images and contaainers
- * Docker Compose services
- * Reverse proxy rounting
- * Docker internal DNS
- * Volumes
- * Healthchecks
- * Restart policy
- * Environment variables
- * Debugging with logs, ps and curl
+## Ansible
 
+Run full deployment and endpoint checks:
+
+```bash
+ansible-playbook -i ansible/hosts ansible/site.yml -K
+```
+
+Or:
+
+```bash
+make ansible-deploy
+```
+
+The Ansible workflow:
+
+```text
+site.yml
+├── deploy.yml
+└── check-endpoint.yml
+```
+
+## CI/CD
+
+GitHub Actions checks:
+
+- Ansible syntax
+- Docker Compose configuration
+- Docker build
+- container startup
+- smoke tests
+
+The CI workflow uses the same reusable script as local testing:
+
+```bash
+./scripts/smoke-test.sh
+```
+
+## Troubleshooting
+
+See:
+
+```text
+RUNBOOK.md
+```
+
+## Kubernetes Practice
+
+This project is also used as a base for Kubernetes practice.
+
+Current Kubernetes manifests:
+
+```text
+k8s/backend-deployment.yaml
+k8s/backend-service.yaml
+```
+
+The first Kubernetes step is to run only the backend as:
+
+```text
+Deployment + ClusterIP Service
 ```
