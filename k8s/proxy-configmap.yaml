@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: proxy-config
+data:
+  default.conf: |
+    server {
+        listen 80;
+
+        location /health {
+            proxy_pass http://backend:5000/health;
+        }
+
+        location /api/ {
+            proxy_pass http://backend:5000/api/;
+        }
+    }
