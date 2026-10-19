@@ -1,75 +1,41 @@
-
-
-set -euo pipefail
-
-BASE_URL="${BASE_URL:-http://127.0.0.1}"
-
-check_endpoint() {
-  local path="$1"
-  local expected="$2"
-
-
-  echo "Checking ${BASE_URL}${path}"
-
-  response="$(curl -fsS "${BASE_URL}${path}")"
-
-  if [[ "$response" != *"$expected"* ]]; then
-    echo "ERROR: ${path} returned unexpected response"
-    echo "Expected to contain: $expected"
-    echo "Actual response: $response"
-    exit 1
-  fi
-
-  echo "OK: ${path}"
-
-}
-
-check_endpoint "/health" "OK"
-check_endpoint "/api/" "Hello from ENV"
-check_endpoint "/site1/" "SITE 1"
-check_endpoint "/site2/" "SITE 2"
-
-echo "All smoke tests passed"
 #!/usr/bin/env bash
-
 set -euo pipefail
 
 BASE_URL="${BASE_URL:-http://127.0.0.1}"
 SMOKE_RETRIES="${SMOKE_RETRIES:-10}"
 SMOKE_DELAY="${SMOKE_DELAY:-2}"
+EXPECTED_MESSAGE="${MESSAGE:-Hello from ENV}"
 
 check_endpoint() {
   local path="$1"
   local expected="$2"
   local response=""
+  local attempt
 
   echo "Checking ${BASE_URL}${path}"
-
-  for attempt in $(seq 1 "$SMOKE_RETRIES"); do
-    if response="$(curl -fsS "${BASE_URL}${path}" 2>/tmp/smoke-test-error.log)"; then
+  for ((attempt = 1; attempt <= SMOKE_RETRIES; attempt++)); do
+    if response="$(curl --max-time 6 -fsS "${BASE_URL}${path}")"; then
       if [[ "$response" == *"$expected"* ]]; then
-        echo "OK: ${path}"
+        echo "OK: $path"
         return 0
       fi
 
-      echo "ERROR: ${path} returned unexpected response"
-      echo "Expected to contain: $expected"
-      echo "Actual response: $response"
-      exit 1
+      printf 'ERROR: %s returned unexpected response\nExpected: %s\nActual: %s\n' "$path" "$expected" "$response" >&2
+      return 1
     fi
 
     echo "Attempt ${attempt}/${SMOKE_RETRIES} failed for ${path}"
-    cat /tmp/smoke-test-error.log || true
-    sleep "$SMOKE_DELAY"
+    if ((attempt < SMOKE_RETRIES)); then
+      sleep "$SMOKE_DELAY"
+    fi
   done
 
-  echo "ERROR: ${path} did not become available"
-  exit 1
+  echo "ERROR: ${path} did not become available" >&2
+  return 1
 }
 
 check_endpoint "/health" "OK"
-check_endpoint "/api/" "Hello from ENV"
+check_endpoint "/api/" "$EXPECTED_MESSAGE"
 check_endpoint "/site1/" "SITE 1"
 check_endpoint "/site2/" "SITE 2"
-
 echo "All smoke tests passed"
