@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - modernize/2026-foundation
   pull_request:
 
 jobs:
@@ -14,8 +15,13 @@ jobs:
       MESSAGE: Hello from ENV
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Check Python response encoding
+        run: python -m unittest discover -s tests -v
+
+      - name: Check script syntax
+        run: bash -n scripts/smoke-test.sh
 
       - name: Install ansible-core
         run: python -m pip install ansible-core
@@ -32,13 +38,11 @@ jobs:
       - name: Start services
         run: docker compose up -d
 
-      - name: Wait for services
-        run: sleep 10
-
       - name: Run smoke tests
         run: ./scripts/smoke-test.sh
 
       - name: Show containers
+        if: always()
         run: docker compose ps
 
       - name: Stop services
