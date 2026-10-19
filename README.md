@@ -79,11 +79,11 @@ make down
 ## Manual Docker Compose Commands
 
 ```bash
-docker-compose up -d --build
-docker-compose ps
+docker compose up -d --build
+docker compose ps
 ./scripts/smoke-test.sh
-docker-compose logs --tail=50
-docker-compose down
+docker compose logs --tail=50
+docker compose down
 ```
 
 ## Endpoints
@@ -157,3 +157,10 @@ The first Kubernetes step is to run only the backend as:
 ```text
 Deployment + ClusterIP Service
 ```
+
+## Reliability hardening (2026)
+
+- Backend JSON is built via `json.dumps` to avoid malformed responses when `MESSAGE` contains quotes or non-ASCII characters.
+- Smoke-test script has one Bash entrypoint and retries startup failures without hiding malformed endpoint content.
+- CI checks Python response encoding, Bash syntax, Ansible, Docker Compose and live HTTP routes.
+- This is an infrastructure **lab**, not a publicly hardened ingress. Do not expose port 80 to the internet without TLS, access restrictions, resource limits and an explicit security review.
